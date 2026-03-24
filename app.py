@@ -124,33 +124,37 @@ fig2 = px.line(
 fig2.update_traces(textposition="top center")
 st.plotly_chart(fig2, use_container_width=True)
 
-# 🔹 Visitantes e visualizações (CORRIGIDO)
+# 🔹 Visitantes e visualizações por dia
 st.subheader("Visitantes e visualizações por dia")
 
+# Agrupar e ordenar
 df_agg = df_pordia.groupby('Date', as_index=False)[['Users', 'Views']].sum()
 df_agg = df_agg.sort_values('Date')
 
-df_long = df_agg.melt(
-    id_vars='Date',
-    value_vars=['Users', 'Views'],
-    var_name='Métrica',
-    value_name='Valor'
-)
-
-df_long['Métrica'] = df_long['Métrica'].replace({
-    'Users': 'Visitantes',
-    'Views': 'Visualizações'
-})
-
+# 🔹 Criar gráfico base (visitantes)
 fig3 = px.line(
-    df_long,
+    df_agg,
     x='Date',
-    y='Valor',
-    color='Métrica',
+    y='Users',
     markers=True,
-    color_discrete_sequence=[COR_PRINCIPAL, "#5A7BBF"]
+    color_discrete_sequence=["#5A7BBF"]
 )
 
+# 🔹 Adicionar visualizações com rótulo
+fig3.add_scatter(
+    x=df_agg['Date'],
+    y=df_agg['Views'],
+    mode='lines+markers+text',
+    name='Visualizações',
+    text=df_agg['Views'].where(df_agg['Views'] > 100),
+    textposition='top center',
+    line=dict(color=COR_PRINCIPAL, width=3)
+)
+
+# 🔹 Ajustar nome da primeira série
+fig3.data[0].name = "Visitantes"
+
+# 🔹 Layout
 fig3.update_layout(
     xaxis_title="Data",
     yaxis_title="Quantidade",
