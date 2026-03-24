@@ -160,7 +160,6 @@ fig3.add_scatter(
 fig3.update_layout(
     xaxis_title="Data",
     yaxis_title="Quantidade",
-    legend_title="Métrica",
     hovermode="x unified",
     legend=dict(
         orientation="h",   # horizontal
