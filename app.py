@@ -125,12 +125,13 @@ fig2 = px.line(
 fig2.update_traces(textposition="top center")
 st.plotly_chart(fig2, use_container_width=True)
 
-# 🔹 Visitantes e visualizações
+# 🔹 Visitantes e visualizações por dia
 st.subheader("Visitantes e visualizações por dia")
 
 df_agg = df_pordia.groupby('Date', as_index=False)[['Users', 'Views']].sum()
 df_agg = df_agg.sort_values('Date')
 
+# 🔹 Visitantes (base)
 fig3 = px.line(
     df_agg,
     x='Date',
@@ -139,6 +140,11 @@ fig3 = px.line(
     color_discrete_sequence=["#5A7BBF"]
 )
 
+# 🔥 GARANTIR legenda correta
+fig3.data[0].name = "Visitantes"
+fig3.data[0].showlegend = True
+
+# 🔹 Visualizações (com rótulo)
 fig3.add_scatter(
     x=df_agg['Date'],
     y=df_agg['Views'],
@@ -146,11 +152,11 @@ fig3.add_scatter(
     name='Visualizações',
     text=df_agg['Views'],
     textposition='top center',
-    line=dict(color=COR_PRINCIPAL, width=3)
+    line=dict(color=COR_PRINCIPAL, width=3),
+    showlegend=True
 )
 
-fig3.data[0].name = "Visitantes"
-
+# 🔹 Layout
 fig3.update_layout(
     xaxis_title="Data",
     yaxis_title="Quantidade",
