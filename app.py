@@ -90,6 +90,38 @@ col8.metric("Países distintos", df_paisestado['Country'].nunique())
 st.divider()
 
 # =========================
+# KPIs DE PARTICIPAÇÃO NOS PARÁGRAFOS
+# =========================
+st.subheader("Distribuição de participação nos parágrafos")
+
+total_paragrafos = len(df_paragrafos)
+
+sem_comentario = (df_paragrafos['quantidade_comentarios'] == 0).sum()
+um_comentario = (df_paragrafos['quantidade_comentarios'] == 1).sum()
+mais_de_um = (df_paragrafos['quantidade_comentarios'] > 1).sum()
+
+pct_sem = sem_comentario / total_paragrafos
+pct_um = um_comentario / total_paragrafos
+pct_mais = mais_de_um / total_paragrafos
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric(
+    "Sem contribuições",
+    f"{pct_sem:.0%}"
+)
+
+col2.metric(
+    "1 contribuição",
+    f"{pct_um:.0%}"
+)
+
+col3.metric(
+    "Mais de 1 contribuição",
+    f"{pct_mais:.0%}"
+)
+
+# =========================
 # GRÁFICOS
 # =========================
 
