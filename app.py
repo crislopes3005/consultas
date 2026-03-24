@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
 
 # =========================
 # CONFIG
@@ -117,21 +119,18 @@ fig2 = px.line(
     y='id',
     markers=True,
     text='id',
-    labels={"data": "Data", "id": "Comentários"},
     color_discrete_sequence=[COR_PRINCIPAL]
 )
 
 fig2.update_traces(textposition="top center")
 st.plotly_chart(fig2, use_container_width=True)
 
-# 🔹 Visitantes e visualizações por dia
+# 🔹 Visitantes e visualizações
 st.subheader("Visitantes e visualizações por dia")
 
-# Agrupar e ordenar
 df_agg = df_pordia.groupby('Date', as_index=False)[['Users', 'Views']].sum()
 df_agg = df_agg.sort_values('Date')
 
-# 🔹 Criar gráfico base (visitantes)
 fig3 = px.line(
     df_agg,
     x='Date',
@@ -140,21 +139,18 @@ fig3 = px.line(
     color_discrete_sequence=["#5A7BBF"]
 )
 
-# 🔹 Adicionar visualizações com rótulo
 fig3.add_scatter(
     x=df_agg['Date'],
     y=df_agg['Views'],
     mode='lines+markers+text',
     name='Visualizações',
-    text=df_agg['Views'].where(df_agg['Views'] > 100),
+    text=df_agg['Views'],
     textposition='top center',
     line=dict(color=COR_PRINCIPAL, width=3)
 )
 
-# 🔹 Ajustar nome da primeira série
 fig3.data[0].name = "Visitantes"
 
-# 🔹 Layout
 fig3.update_layout(
     xaxis_title="Data",
     yaxis_title="Quantidade",
@@ -195,3 +191,53 @@ fig5 = px.pie(
 
 fig5.update_traces(textinfo='percent+label')
 st.plotly_chart(fig5, use_container_width=True)
+
+# =========================
+# TABELA FINAL
+# =========================
+st.subheader("Detalhamento dos parágrafos")
+
+df_tabela = df_paragrafos[['descricao_curta', 'quantidade_comentarios', 'url_proposta']].copy()
+df_tabela = df_tabela.sort_values('quantidade_comentarios', ascending=False)
+
+df_tabela['🔗'] = df_tabela['url_proposta'].apply(
+    lambda x: f'<a href="{x}" target="_blank">🔗</a>'
+)
+
+st.markdown(
+    df_tabela[['descricao_curta', 'quantidade_comentarios', '🔗']]
+    .rename(columns={
+        'descricao_curta': 'Descrição',
+        'quantidade_comentarios': 'Comentários'
+    })
+    .to_html(escape=False, index=False),
+    unsafe_allow_html=True
+)
+
+# =========================
+# NUVEM DE PALAVRAS
+# =========================
+st.subheader("Nuvem de palavras dos comentários")
+
+texto = " ".join(df_comentarios['texto'].dropna().astype(str))
+
+stopwords = set(STOPWORDS)
+stopwords.update([
+    "de", "da", "do", "e", "a", "o", "que", "em", "para"
+])
+
+wordcloud = WordCloud(
+    width=800,
+    height=400,
+    background_color='white',
+    colormap='Blues',
+    stopwords=stopwords
+).generate(texto)
+
+fig, ax = plt.subplots()
+ax.imshow(wordcloud, interpolation='bilinear')
+ax.axis("off")
+
+st.pyplot(fig)
+
+
