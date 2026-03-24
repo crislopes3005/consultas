@@ -28,7 +28,7 @@ else:
 # =========================
 # TRATAMENTOS
 # =========================
-
+st.write(df_comentarios['data_publicacao'].head(10))
 # Datas (remover hora)
 df_comentarios['data_publicacao'] = pd.to_datetime(df_comentarios['data_publicacao']).dt.date
 df_pordia['Date'] = pd.to_datetime(df_pordia['Date']).dt.date
