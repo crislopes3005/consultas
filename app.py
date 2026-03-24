@@ -161,7 +161,14 @@ fig3.update_layout(
     xaxis_title="Data",
     yaxis_title="Quantidade",
     legend_title="Métrica",
-    hovermode="x unified"
+    hovermode="x unified",
+    legend=dict(
+        orientation="h",   # horizontal
+        yanchor="top",
+        y=-0.2,            # posição abaixo do gráfico
+        xanchor="center",
+        x=0.5              # centralizado
+    )
 )
 
 st.plotly_chart(fig3, use_container_width=True)
