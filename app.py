@@ -157,6 +157,7 @@ fig3.update_layout(
     legend_title="Métrica",
     hovermode="x unified"
 )
+fig3.update_traces(textposition="outside")
 
 st.plotly_chart(fig3, use_container_width=True)
 
@@ -191,4 +192,3 @@ fig5 = px.pie(
 
 fig5.update_traces(textinfo='percent+label')
 st.plotly_chart(fig5, use_container_width=True)
-st.plotly_chart(fig, use_container_width=True)
