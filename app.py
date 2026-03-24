@@ -97,7 +97,7 @@ st.subheader("Distribuição de participação nos parágrafos")
 total_paragrafos = len(df_paragrafos)
 
 sem_comentario = (df_paragrafos['quantidade_comentarios'] == 0).sum()
-um_comentario = (df_paragrafos['quantidade_comentarios'] == 5).sum()
+um_comentario = (df_paragrafos['quantidade_comentarios'] <= 5).sum()
 mais_de_um = (df_paragrafos['quantidade_comentarios'] > 5).sum()
 
 pct_sem = sem_comentario / total_paragrafos
