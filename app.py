@@ -113,20 +113,9 @@ pct_mais5 = mais_de_5 / total
 
 col1, col2, col3 = st.columns(3)
 
-col1.metric(
-    "Sem contribuições",
-    f"{pct_sem:.0%}"
-)
-
-col2.metric(
-    "5 contribuições",
-    f"{pct_um:.0%}"
-)
-
-col3.metric(
-    "Mais de 5 contribuições",
-    f"{pct_mais:.0%}"
-)
+col1.metric("Sem contribuições", f"{pct_sem:.0%}")
+col2.metric("1 a 5 contribuições", f"{pct_ate5:.0%}")
+col3.metric("Mais de 5 contribuições", f"{pct_mais5:.0%}")
 
 # =========================
 # GRÁFICOS
