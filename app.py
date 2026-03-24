@@ -40,6 +40,8 @@ df_pordia['Date'] = pd.to_datetime(df_pordia['Date']).dt.date
 # Estados com primeira maiúscula
 df_paisestado['Region'] = df_paisestado['Region'].str.title()
 
+
+st.write(df_pordia['Avg Session Duration (Sec)'].describe())
 # =========================
 # KPIs
 # =========================
