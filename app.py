@@ -97,12 +97,19 @@ st.subheader("Distribuição de participação nos parágrafos")
 total_paragrafos = len(df_paragrafos)
 
 sem_comentario = (df_paragrafos['quantidade_comentarios'] == 0).sum()
-um_comentario = (df_paragrafos['quantidade_comentarios'] <= 5).sum()
-mais_de_um = (df_paragrafos['quantidade_comentarios'] > 5).sum()
 
-pct_sem = sem_comentario / total_paragrafos
-pct_um = um_comentario / total_paragrafos
-pct_mais = mais_de_um / total_paragrafos
+ate_5 = (
+    (df_paragrafos['quantidade_comentarios'] >= 1) &
+    (df_paragrafos['quantidade_comentarios'] <= 5)
+).sum()
+
+mais_de_5 = (df_paragrafos['quantidade_comentarios'] > 5).sum()
+
+total = len(df_paragrafos)
+
+pct_sem = sem_comentario / total
+pct_ate5 = ate_5 / total
+pct_mais5 = mais_de_5 / total
 
 col1, col2, col3 = st.columns(3)
 
@@ -112,12 +119,12 @@ col1.metric(
 )
 
 col2.metric(
-    "1 contribuição",
+    "5 contribuições",
     f"{pct_um:.0%}"
 )
 
 col3.metric(
-    "Mais de 1 contribuição",
+    "Mais de 5 contribuições",
     f"{pct_mais:.0%}"
 )
 
