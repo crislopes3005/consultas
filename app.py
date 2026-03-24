@@ -157,7 +157,6 @@ fig3.update_layout(
     legend_title="Métrica",
     hovermode="x unified"
 )
-fig3.update_traces(textposition="outside")
 
 st.plotly_chart(fig3, use_container_width=True)
 
