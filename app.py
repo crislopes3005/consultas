@@ -222,8 +222,39 @@ st.subheader("Nuvem de palavras dos comentários")
 texto = " ".join(df_comentarios['texto'].dropna().astype(str))
 
 stopwords = set(STOPWORDS)
+stopwords = set(STOPWORDS)
+
 stopwords.update([
-    "de", "da", "do", "e", "a", "o", "que", "em", "para"
+    # artigos
+    "o", "a", "os", "as", "um", "uma", "uns", "umas",
+
+    # preposições
+    "de", "da", "do", "das", "dos",
+    "em", "no", "na", "nos", "nas",
+    "para", "por", "com", "sem",
+    "sob", "sobre", "entre", "até",
+    "desde", "contra", "perante",
+    "ante", "após", "trás",
+
+    # contrações comuns
+    "ao", "aos", "à", "às",
+    "pelo", "pela", "pelos", "pelas",
+    "num", "numa", "nuns", "numas",
+    "dum", "duma", "duns", "dumas",
+
+    # pronomes e conectivos (melhora muito a nuvem)
+    "que", "se", "isso", "isto", "aquele", "aquela",
+    "ele", "ela", "eles", "elas",
+    "me", "te", "lhe", "nos", "vos",
+    "eu", "tu", "você", "vocês",
+    "nós", "eles", "elas",
+    "qual", "quais", "quem",
+    "onde", "quando", "como",
+
+    # conectores muito comuns
+    "e", "ou", "mas", "porque", "pois", "logo",
+    "também", "já", "ainda", "muito", "mais",
+    "menos", "tudo", "todos", "todas"
 ])
 
 wordcloud = WordCloud(
