@@ -97,7 +97,7 @@ st.divider()
 st.subheader("Comentários por parágrafo")
 
 fig1 = px.bar(
-    df_paragrafos.sort_values('quantidade_comentarios'),
+    df_paragrafos.sort_values('quantidade_comentarios').tail(10),
     y="descricao_curta",
     x="quantidade_comentarios",
     orientation="h",
