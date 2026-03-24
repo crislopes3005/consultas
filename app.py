@@ -63,10 +63,7 @@ df_limpo = df_pordia[
     (df_pordia['Avg Session Duration (Sec)'] > 0) &
     (df_pordia['Avg Session Duration (Sec)'] < 3600)
 ]
-df_limpo = df_pordia[
-    (df_pordia['Avg Session Duration (Sec)'] > 0) &
-    (df_pordia['Avg Session Duration (Sec)'] < 3600)
-]
+
 avg_min = df_limpo['Avg Session Duration (Sec)'].mean() / 60
 st.metric("Duração média (min)", f"{avg_min:.2f}")
 
