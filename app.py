@@ -3,6 +3,13 @@ import pandas as pd
 import plotly.express as px
 
 # =========================
+# CONFIG
+# =========================
+COR_PRINCIPAL = "#002E73"
+
+st.set_page_config(layout="wide")
+
+# =========================
 # UPLOAD
 # =========================
 st.sidebar.header("📂 Base de dados")
@@ -19,26 +26,43 @@ if arquivo_upload:
     df_paisestado = pd.read_excel(arquivo_upload, sheet_name='paisestado')
     df_dispositivo = pd.read_excel(arquivo_upload, sheet_name='dispositivo')
 else:
-    df_comentarios = pd.read_excel('consulta.xlsx', sheet_name='comentarios')
-    df_paragrafos = pd.read_excel('consulta.xlsx', sheet_name='paragrafos')
-    df_pordia = pd.read_excel('consulta.xlsx', sheet_name='pordia')
-    df_paisestado = pd.read_excel('consulta.xlsx', sheet_name='paisestado')
-    df_dispositivo = pd.read_excel('consulta.xlsx', sheet_name='dispositivo')
+    st.warning("Envie um arquivo para continuar")
+    st.stop()
 
 # =========================
 # TRATAMENTOS
 # =========================
 
-# Datas (remover hora)
+# Datas
 df_comentarios['data_publicacao'] = pd.to_datetime(
     df_comentarios['data_publicacao'],
     format='%d/%m/%Y %H:%M',
     errors='coerce'
-).dt.date
+)
+
+df_comentarios['data'] = df_comentarios['data_publicacao'].dt.date
+
 df_pordia['Date'] = pd.to_datetime(df_pordia['Date']).dt.date
 
-# Estados com primeira maiúscula
+# Descrição curta
+df_paragrafos['descricao_curta'] = df_paragrafos['descricao'].apply(
+    lambda x: x[:30] + "..." if isinstance(x, str) and len(x) > 30 else x
+)
+
+# Estados formatados
 df_paisestado['Region'] = df_paisestado['Region'].str.title()
+
+# Converter duração para número
+df_pordia['Avg Session Duration (Sec)'] = pd.to_numeric(
+    df_pordia['Avg Session Duration (Sec)'],
+    errors='coerce'
+)
+
+# Remover valores absurdos
+df_duracao = df_pordia[
+    (df_pordia['Avg Session Duration (Sec)'] > 0) &
+    (df_pordia['Avg Session Duration (Sec)'] < 3600)
+]
 
 # =========================
 # KPIs
@@ -59,13 +83,9 @@ col4.metric("Visitantes únicos", df_pordia['Users'].sum())
 col5.metric("Visualizações", df_pordia['Views'].sum())
 col6.metric("Taxa de rejeição", f"{df_pordia['Bounce Rate'].mean():.2%}")
 
-df_limpo = df_pordia[
-    (df_pordia['Avg Session Duration (Sec)'] > 0) &
-    (df_pordia['Avg Session Duration (Sec)'] < 3600)
-]
-
-avg_min = df_limpo['Avg Session Duration (Sec)'].mean() / 60
-st.metric("Duração média (min)", f"{avg_min:.2f}")
+# duração (mediana limpa)
+avg_sec = df_duracao['Avg Session Duration (Sec)'].median()
+col7.metric("Duração média", f"{int(avg_sec//60)}m {int(avg_sec%60)}s")
 
 col8.metric("Países distintos", df_paisestado['Country'].nunique())
 
@@ -80,32 +100,36 @@ st.subheader("Comentários por parágrafo")
 
 fig1 = px.bar(
     df_paragrafos.sort_values('quantidade_comentarios'),
-    y="descricao",
+    y="descricao_curta",
     x="quantidade_comentarios",
     orientation="h",
-    color_discrete_sequence=["#002E73"]
+    text="quantidade_comentarios",
+    color_discrete_sequence=[COR_PRINCIPAL]
 )
+
+fig1.update_traces(textposition="outside")
 
 st.plotly_chart(fig1, use_container_width=True)
 
 # 🔹 Comentários por dia
 st.subheader("Comentários por dia")
 
-comentarios_dia = df_comentarios.groupby('data_publicacao')['id'].count().reset_index()
+comentarios_dia = df_comentarios.groupby('data')['id'].count().reset_index()
 
 fig2 = px.line(
     comentarios_dia,
-    x='data_publicacao',
+    x='data',
     y='id',
-    labels={
-        "data_publicacao": "Data",
-        "id": "Comentários"
-    }
+    markers=True,
+    text='id',
+    labels={"data": "Data", "id": "Comentários"}
 )
+
+fig2.update_traces(line=dict(color=COR_PRINCIPAL), textposition="top center")
 
 st.plotly_chart(fig2, use_container_width=True)
 
-# 🔹 Visitantes e visualizações por dia
+# 🔹 Visitantes e visualizações
 st.subheader("Visitantes e visualizações por dia")
 
 df_long = df_pordia.melt(
@@ -124,8 +148,13 @@ fig3 = px.line(
     df_long,
     x='Date',
     y='Valor',
-    color='Métrica'
+    color='Métrica',
+    markers=True,
+    text='Valor',
+    color_discrete_sequence=[COR_PRINCIPAL, "#5A7BBF"]
 )
+
+fig3.update_traces(textposition="top center")
 
 st.plotly_chart(fig3, use_container_width=True)
 
@@ -141,11 +170,11 @@ fig4 = px.bar(
     x='Sessions',
     y='Region',
     orientation='h',
-    labels={
-        "Sessions": "Sessões",
-        "Region": "Estado"
-    }
+    text='Sessions',
+    color_discrete_sequence=[COR_PRINCIPAL]
 )
+
+fig4.update_traces(textposition="outside")
 
 st.plotly_chart(fig4, use_container_width=True)
 
@@ -155,7 +184,10 @@ st.subheader("Acesso por dispositivo")
 fig5 = px.pie(
     df_dispositivo,
     names='Device Type',
-    values='Sessions'
+    values='Sessions',
+    color_discrete_sequence=[COR_PRINCIPAL, "#5A7BBF", "#A5B8E1"]
 )
+
+fig5.update_traces(textinfo='percent+label')
 
 st.plotly_chart(fig5, use_container_width=True)
