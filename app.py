@@ -47,7 +47,7 @@ df_pordia['Date'] = pd.to_datetime(df_pordia['Date'], dayfirst=True)
 
 # Descrição curta
 df_paragrafos['descricao_curta'] = df_paragrafos['descricao'].apply(
-    lambda x: x[:30] + "..." if isinstance(x, str) and len(x) > 30 else x
+    lambda x: x[:50] + "..." if isinstance(x, str) and len(x) > 50 else x
 )
 
 # Estados
