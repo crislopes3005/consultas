@@ -48,7 +48,7 @@ df_pordia['Date'] = pd.to_datetime(df_pordia['Date'], dayfirst=True)
 # Descrição curta
 df_paragrafos['descricao_curta'] = df_paragrafos['descricao'].apply(
     lambda x: (
-        lambda cleaned: cleaned[:30] + "..." if len(cleaned) > 30 else cleaned
+        lambda cleaned: cleaned[:60] + "..." if len(cleaned) > 60 else cleaned
     )(' '.join(x.split()) if isinstance(x, str) else x)
     if isinstance(x, str) else x
 )
