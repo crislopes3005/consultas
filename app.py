@@ -241,7 +241,7 @@ st.plotly_chart(fig5, use_container_width=True)
 st.subheader("Detalhamento dos parágrafos")
 
 df_tabela = df_paragrafos[['descricao_curta', 'quantidade_comentarios', 'url_proposta']].copy()
-df_tabela = df_tabela.sort_values('quantidade_comentarios', ascending=False)
+df_tabela = df_tabela.sort_values('quantidade_comentarios', ascending=False).head(10)
 
 df_tabela['🔗'] = df_tabela['url_proposta'].apply(
     lambda x: f'<a href="{x}" target="_blank">🔗</a>'
