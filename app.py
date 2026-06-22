@@ -314,3 +314,4 @@ wordcloud = WordCloud(
 fig, ax = plt.subplots()
 ax.imshow(wordcloud, interpolation='bilinear')
 ax.axis("off")
+st.pyplot(fig)
