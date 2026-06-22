@@ -137,11 +137,8 @@ fig1 = px.bar(
 )
 
 fig1.update_traces(textposition="outside")
+fig1.update_layout(xaxis_title=None, yaxis_title=None)
 st.plotly_chart(fig1, use_container_width=True)
-fig.update_layout(
-    xaxis_title=None,
-    yaxis_title=None
-)
 
 # 🔹 Comentários por dia
 st.subheader("Comentários por dia")
@@ -158,11 +155,8 @@ fig2 = px.line(
 )
 
 fig2.update_traces(textposition="top center")
+fig2.update_layout(xaxis_title=None, yaxis_title=None)
 st.plotly_chart(fig2, use_container_width=True)
-fig.update_layout(
-    xaxis_title=None,
-    yaxis_title=None
-)
 
 # 🔹 Visitantes e visualizações por dia
 st.subheader("Visitantes e visualizações por dia")
@@ -197,8 +191,8 @@ fig3.add_scatter(
 
 # 🔹 Layout
 fig3.update_layout(
-    xaxis_title="Data",
-    yaxis_title="Quantidade",
+    xaxis_title=None,
+    yaxis_title=None,
     hovermode="x unified",
     legend=dict(
         orientation="h",   # horizontal
@@ -210,10 +204,6 @@ fig3.update_layout(
 )
 
 st.plotly_chart(fig3, use_container_width=True)
-fig.update_layout(
-    xaxis_title=None,
-    yaxis_title=None
-)
 
 # 🔹 Top 10 estados
 st.subheader("Top 10 estados com mais visitas")
@@ -232,11 +222,8 @@ fig4 = px.bar(
 )
 
 fig4.update_traces(textposition="outside")
+fig4.update_layout(xaxis_title=None, yaxis_title=None)
 st.plotly_chart(fig4, use_container_width=True)
-fig.update_layout(
-    xaxis_title=None,
-    yaxis_title=None
-)
 
 # 🔹 Dispositivos
 st.subheader("Acesso por dispositivo")
@@ -250,10 +237,6 @@ fig5 = px.pie(
 
 fig5.update_traces(textinfo='percent+label')
 st.plotly_chart(fig5, use_container_width=True)
-fig.update_layout(
-    xaxis_title=None,
-    yaxis_title=None
-)
 
 # =========================
 # TABELA FINAL
@@ -331,7 +314,3 @@ wordcloud = WordCloud(
 fig, ax = plt.subplots()
 ax.imshow(wordcloud, interpolation='bilinear')
 ax.axis("off")
-
-st.pyplot(fig)
-
-
