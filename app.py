@@ -45,6 +45,9 @@ df_comentarios['data_publicacao'] = pd.to_datetime(
 df_comentarios['data'] = df_comentarios['data_publicacao'].dt.date
 df_pordia['Date'] = pd.to_datetime(df_pordia['Date'], dayfirst=True)
 
+# Comentários válidos (não deletados)
+df_comentarios_validos = df_comentarios[df_comentarios['deletado_em'].isna()]
+
 # Descrição curta
 df_paragrafos['descricao_curta'] = df_paragrafos['descricao'].apply(
     lambda x: (
@@ -73,8 +76,8 @@ df_duracao = df_pordia[
 st.divider()
 
 col1, col2, col3 = st.columns(3)
-col1.metric("Comentários", df_comentarios['id'].count())
-col2.metric("Proponentes distintos", df_comentarios['autor/id'].nunique())
+col1.metric("Comentários", df_comentarios_validos['id'].count())
+col2.metric("Proponentes distintos", df_comentarios_validos['autor/id'].nunique())
 col3.metric("Parágrafos", df_paragrafos['id_proposta'].nunique())
 
 st.divider()
@@ -143,7 +146,7 @@ st.plotly_chart(fig1, use_container_width=True)
 # 🔹 Comentários por dia
 st.subheader("Comentários por dia")
 
-comentarios_dia = df_comentarios.groupby('data')['id'].count().reset_index()
+comentarios_dia = df_comentarios_validos.groupby('data')['id'].count().reset_index()
 
 fig2 = px.line(
     comentarios_dia.sort_values('data'),
@@ -265,7 +268,7 @@ st.markdown(
 # =========================
 st.subheader("Nuvem de palavras dos comentários")
 
-texto = " ".join(df_comentarios['texto'].dropna().astype(str))
+texto = " ".join(df_comentarios_validos['texto'].dropna().astype(str))
 
 stopwords = set(STOPWORDS)
 stopwords = set(STOPWORDS)
