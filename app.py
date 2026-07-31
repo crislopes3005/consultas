@@ -53,9 +53,6 @@ df_paragrafos['descricao_curta'] = df_paragrafos['descricao'].apply(
     if isinstance(x, str) else x
 )
 
-# Parágrafos válidos (não deletados)
-df_paragrafos_validos = df_paragrafos[df_paragrafos['deletado_em'].isna()]
-
 # Estados
 df_paisestado['Region'] = df_paisestado['Region'].str.title()
 
@@ -78,7 +75,7 @@ st.divider()
 col1, col2, col3 = st.columns(3)
 col1.metric("Comentários", df_comentarios['id'].count())
 col2.metric("Proponentes distintos", df_comentarios['autor/id'].nunique())
-col3.metric("Parágrafos", df_paragrafos_validos['id_proposta'].nunique())
+col3.metric("Parágrafos", df_paragrafos['id_proposta'].nunique())
 
 st.divider()
 
@@ -100,18 +97,18 @@ st.divider()
 # =========================
 st.subheader("Distribuição de participação nos parágrafos")
 
-total_paragrafos = len(df_paragrafos_validos)
+total_paragrafos = len(df_paragrafos)
 
-sem_comentario = (df_paragrafos_validos['quantidade_comentarios'] == 0).sum()
+sem_comentario = (df_paragrafos['quantidade_comentarios'] == 0).sum()
 
 ate_5 = (
-    (df_paragrafos_validos['quantidade_comentarios'] >= 1) &
-    (df_paragrafos_validos['quantidade_comentarios'] <= 5)
+    (df_paragrafos['quantidade_comentarios'] >= 1) &
+    (df_paragrafos['quantidade_comentarios'] <= 5)
 ).sum()
 
-mais_de_5 = (df_paragrafos_validos['quantidade_comentarios'] > 5).sum()
+mais_de_5 = (df_paragrafos['quantidade_comentarios'] > 5).sum()
 
-total = len(df_paragrafos_validos)
+total = len(df_paragrafos)
 
 pct_sem = sem_comentario / total
 pct_ate5 = ate_5 / total
