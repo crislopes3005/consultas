@@ -88,8 +88,17 @@ col4.metric("Visitantes únicos", df_pordia['Users'].sum())
 col5.metric("Visualizações", df_pordia['Views'].sum())
 col6.metric("Taxa de rejeição", f"{df_pordia['Bounce Rate'].mean():.2%}")
 
-avg_sec = df_duracao['Avg Session Duration (Sec)'].median()
-col7.metric("Duração média", f"{int(avg_sec//60)}m {int(avg_sec%60)}s")
+avg_sec = pd.to_numeric(
+    df_duracao['Avg Session Duration (Sec)'],
+    errors='coerce'
+).median()
+
+if pd.isna(avg_sec):
+    duracao_media = "0m 0s"
+else:
+    duracao_media = f"{int(avg_sec // 60)}m {int(avg_sec % 60)}s"
+
+col7.metric("Duração média", duracao_media)
 
 col8.metric("Países distintos", df_paisestado['Country'].nunique())
 
