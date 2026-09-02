@@ -46,7 +46,14 @@ df_comentarios['data'] = df_comentarios['data_publicacao'].dt.date
 df_pordia['Date'] = pd.to_datetime(df_pordia['Date'], dayfirst=True)
 
 # Comentários válidos (não deletados)
-df_comentarios_validos = df_comentarios[df_comentarios['deletado_em'].isna()]
+df_comentarios['deletado_em'] = df_comentarios['deletado_em'].replace(
+    ['', ' ', 'NULL', 'null', 'None'],
+    pd.NA
+)
+
+df_comentarios_validos = df_comentarios[
+    df_comentarios['deletado_em'].isna()
+].copy()
 
 # Descrição curta
 df_paragrafos['descricao_curta'] = df_paragrafos['descricao'].apply(
