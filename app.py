@@ -45,14 +45,15 @@ df_comentarios['data_publicacao'] = pd.to_datetime(
 df_comentarios['data'] = df_comentarios['data_publicacao'].dt.date
 df_pordia['Date'] = pd.to_datetime(df_pordia['Date'], dayfirst=True)
 
-# Comentários válidos (não deletados)
+# Comentários válidos: não deletados e que não sejam respostas
 df_comentarios['deletado_em'] = df_comentarios['deletado_em'].replace(
     ['', ' ', 'NULL', 'null', 'None'],
     pd.NA
 )
 
 df_comentarios_validos = df_comentarios[
-    df_comentarios['deletado_em'].isna()
+    df_comentarios['deletado_em'].isna() &
+    (df_comentarios['tipo_contribuicao'].astype(str).str.strip() != "Resposta à contribuição")
 ].copy()
 
 # Descrição curta
@@ -61,6 +62,24 @@ df_paragrafos['descricao_curta'] = df_paragrafos['descricao'].apply(
         lambda cleaned: cleaned[:60] + "..." if len(cleaned) > 60 else cleaned
     )(' '.join(x.split()) if isinstance(x, str) else x)
     if isinstance(x, str) else x
+)
+
+# Contagem de comentários por parágrafo, a partir da aba comentarios
+contagem_paragrafos = (
+    df_comentarios_validos
+    .groupby('id_proposta')['id']
+    .count()
+    .rename('quantidade_comentarios')
+    .reset_index()
+)
+
+df_paragrafos = (
+    df_paragrafos
+    .drop(columns='quantidade_comentarios', errors='ignore')
+    .merge(contagem_paragrafos, on='id_proposta', how='left')
+)
+df_paragrafos['quantidade_comentarios'] = (
+    df_paragrafos['quantidade_comentarios'].fillna(0).astype(int)
 )
 
 # Estados
@@ -116,7 +135,7 @@ st.divider()
 # =========================
 st.subheader("Distribuição de participação nos parágrafos")
 
-total_paragrafos = len(df_paragrafos)
+total = len(df_paragrafos)
 
 sem_comentario = (df_paragrafos['quantidade_comentarios'] == 0).sum()
 
@@ -126,8 +145,6 @@ ate_5 = (
 ).sum()
 
 mais_de_5 = (df_paragrafos['quantidade_comentarios'] > 5).sum()
-
-total = len(df_paragrafos)
 
 pct_sem = sem_comentario / total
 pct_ate5 = ate_5 / total
@@ -286,7 +303,6 @@ st.subheader("Nuvem de palavras dos comentários")
 
 texto = " ".join(df_comentarios_validos['texto'].dropna().astype(str))
 
-stopwords = set(STOPWORDS)
 stopwords = set(STOPWORDS)
 
 stopwords.update([
