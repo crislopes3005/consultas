@@ -67,7 +67,7 @@ df_paragrafos['descricao_curta'] = df_paragrafos['descricao'].apply(
 # Contagem de comentários por parágrafo, a partir da aba comentarios
 contagem_paragrafos = (
     df_comentarios_validos
-    .groupby('id_proposta')['id']
+    .groupby('id_paragrafo')['id']
     .count()
     .rename('quantidade_comentarios')
     .reset_index()
@@ -76,7 +76,7 @@ contagem_paragrafos = (
 df_paragrafos = (
     df_paragrafos
     .drop(columns='quantidade_comentarios', errors='ignore')
-    .merge(contagem_paragrafos, on='id_proposta', how='left')
+    .merge(contagem_paragrafos, on='id_paragrafo', how='left')
 )
 df_paragrafos['quantidade_comentarios'] = (
     df_paragrafos['quantidade_comentarios'].fillna(0).astype(int)
@@ -104,7 +104,7 @@ st.divider()
 col1, col2, col3 = st.columns(3)
 col1.metric("Comentários", df_comentarios_validos['id'].count())
 col2.metric("Proponentes distintos", df_comentarios_validos['autor/id'].nunique())
-col3.metric("Parágrafos", df_paragrafos['id_proposta'].nunique())
+col3.metric("Parágrafos", df_paragrafos['id_paragrafo'].nunique())
 
 st.divider()
 
