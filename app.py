@@ -76,7 +76,13 @@ contagem_paragrafos = (
 df_paragrafos = (
     df_paragrafos
     .drop(columns='quantidade_comentarios', errors='ignore')
-    .merge(contagem_paragrafos, on='id_paragrafo', how='left')
+    .merge(
+        contagem_paragrafos,
+        left_on='id_proposta',
+        right_on='id_paragrafo',
+        how='left'
+    )
+    .drop(columns='id_paragrafo')
 )
 df_paragrafos['quantidade_comentarios'] = (
     df_paragrafos['quantidade_comentarios'].fillna(0).astype(int)
@@ -104,7 +110,7 @@ st.divider()
 col1, col2, col3 = st.columns(3)
 col1.metric("Comentários", df_comentarios_validos['id'].count())
 col2.metric("Proponentes distintos", df_comentarios_validos['autor/id'].nunique())
-col3.metric("Parágrafos", df_paragrafos['id_paragrafo'].nunique())
+col3.metric("Parágrafos", df_paragrafos['id_proposta'].nunique())
 
 st.divider()
 
